@@ -11,11 +11,21 @@ class MainSelection {
     string displayname = "<red>My Item";
     string material = "PAPER";
     string parentmodel = "item/handheld";
+    string texture;
+    string model;
     ordered_json item;
 public:
+  string texture_namespace;
+  string model_namespace;
   string filename;
-  string texture;
-  string model;
+  virtual void save() {
+    std::ofstream file(string("output/") + filename);
+    if (!file.is_open()) {
+      std::cerr << "Failed to open file\n";
+      return;
+    }
+    file << item.dump(2);
+  }
   void setDisplayname(string display, string id) {
     itemname = id;
     displayname = display;
@@ -27,12 +37,12 @@ public:
     item[itemname]["material"] = mat;
   }
   void setTexture(string tex) {
-    texture = texture + tex;
-    item[itemname]["Pack"]["texture"] = tex;
+    texture = tex;
+    item[itemname]["Pack"]["texture"] = texture_namespace + tex;
   }
   void setModel(string mod) {
-    model = model + mod;
-    item[itemname]["Pack"]["model"] = mod;
+    model = mod;
+    item[itemname]["Pack"]["model"] = model_namespace + mod;
   }
   void setParentModel(string parent) {
     parentmodel = parent;
@@ -65,8 +75,8 @@ public:
   void setVariation(int variation) {
     item[itemname]["Mechanics"]["custom_block"]["variation"] = variation;
   }
-  void setModel(int mod) {
-    item[itemname]["Pack"]["model"] = mod;
+  void setBlockModel(int mod) {
+    item[itemname]["Mechanics"]["custom_block"]["model"] = mod;
   }
   void setHardness(int hardness) {
     item[itemname]["Mechanics"]["custom_block"]["hardness"] = hardness;
@@ -74,13 +84,15 @@ public:
   void setBeaconBase(bool beaconBase) {
     item[itemname]["Mechanics"]["custom_block"]["beacon_base_block"] = beaconBase;
   }
-  void saveBlock() {
-    std::ofstream file(string("output/") + filename);
-    if (!file.is_open()) {
-      std::cerr << "Failed to open file\n";
-      return;
-    }
-    file << item.dump(2);
+};
+
+class Item: public MainSelection {
+private:
+  string durability;
+public:
+  void setDurability(int dur) {
+    durability = dur;
+    item[itemname]["Components"]["durability"] = dur;
   }
 };
 
@@ -92,8 +104,6 @@ int main() {
   }
   nlohmann::json data;
   settings >> data;
-  string texture_namespace = data["texture_namespace"];
-  string model_namespace = data["model_namespace"];
   string filename = data["filename"];
   cout << endl;
   cout << "**************" << endl;
@@ -102,55 +112,61 @@ int main() {
   cout << "2. Block" << endl;
   int selection;
   cin >> selection;
-  MainSelection item;
+  MainSelection* item;
+  if (selection == 1) {
+    item = new Item();
+  } else if (selection == 2) {
+    item = new Block();
+  } else {
+    cout << "Invalid selection. Please pick again." << endl;
+  }
+  item->texture_namespace = data["texture_namespace"];
+  item->model_namespace = data["model_namespace"];
   std::filesystem::create_directories("output");
   std::ofstream file(string("output/") + filename);
-  item.filename = filename;
-  item.model = model_namespace;
-  item.texture = texture_namespace;
+  item->filename = filename;
   cout << "Good, Now what do you want the item id to be?" << endl;
   string input;
   string itemid;
   cin >> itemid;
   cout << "What do you want the displayname to be?" << endl;
   cin >> input;
-  item.setDisplayname(input, itemid);
+  item->setDisplayname(input, itemid);
   cout << "What do you want the material to be?" << endl;
   cin >> input;
-  item.setMaterial(input);
+  item->setMaterial(input);
   cout << "What do you want the texture to be? Enter 0 to use a model instead or 1 to set a parent model before setting the texture" << endl;
   cin >> input;
+  item->save();
   if (input == "0") {
     cout << "What do you want the model to be?" << endl;
     cin >> input;
-    item.setModel(input);
+    item->setModel(input);
   } else if (input == "1") {
     cout << "What do you want the parent model to be?" << endl;
     cin >> input;
-    item.setParentModel(input);
+    item->setParentModel(input);
     cout << "What do you want the texture to be?" << endl;
     cin >> input;
-    item.setTexture(input);
+    item->setTexture(input);
   } else {
-    item.setTexture(input);
+    item->setTexture(input);
   }
-  if (selection == 1) {
-   // Item item;
-  } else if (selection == 2) {
-    Block block;
+  if (Item* I = dynamic_cast<Item*>(item)) {
+    cout << "What do you want the durability to be?" << endl;
+    int dur;
+    cin >> dur;
+    I->setDurability(dur);
+    I->save();
+  } else if (Block* B = dynamic_cast<Block*>(item)) {
     cout << "What type of block do you want?\n1 - NOTEBLOCK\n2 - CHORUSBLOCK\n3 - STRINGBLOCK" << endl;
     int intInput;
     cin >> intInput;
-    block.setType(intInput);
+    B->setType(intInput);
 
-    block.saveBlock();
-  } else {
-    cout << "Invalid selection. Please pick again." << endl;
-    cin >> selection;
+    B->save();
   }
-
-
-//item.saveMainselection();
+  delete item;
 
   return 0;
 }
