@@ -48,14 +48,6 @@ public:
     parentmodel = parent;
     item[itemname]["Pack"]["parent_model"] = parent;
   }
-  // void saveMainselection() {
-  //   std::ofstream file(string("output/") + filename);
-  //   if (!file.is_open()) {
-  //     std::cerr << "Failed to open file\n";
-  //     return;
-  //   }
-  //   file << item.dump(2);
-  // }
 };
 
 
@@ -92,11 +84,33 @@ public:
 
 class Item: public MainSelection {
 private:
-  string durability;
+  bool hideTT = false;
+  int durability = 400;
+  bool EnchGlintOvvride = false;
+  int maxStack = 64;
 public:
+  void setHideTooltip(bool hideTooltip) {
+    hideTT = hideTooltip;
+    item[itemname]["Components"]["hide_tooltip"] = hideTooltip;
+  }
+  void setEnchantmentGlintOverride(bool enchantment_glint_override) {
+    EnchGlintOvvride = enchantment_glint_override;
+    if (enchantment_glint_override!=0) {
+      item[itemname]["Components"]["enchantment_glint_override"] = enchantment_glint_override;
+    }
+  }
   void setDurability(int dur) {
     durability = dur;
-    item[itemname]["Components"]["durability"] = dur;
+    if (dur !=0) {
+      item[itemname]["Components"]["durability"] = dur;
+    }
+  }
+  void setMaxStackSize(int maxStackSize) {
+    maxStack = maxStackSize;
+    if (maxStack!=0) {
+      item[itemname]["Components"]["max_stack_size"] = maxStack;
+    }
+
   }
 };
 
@@ -162,15 +176,47 @@ int main() {
   if (Item* I = dynamic_cast<Item*>(item)) {
     cout << "Choose what to add next\n" << "1 - Components\n2 - Lore\n3 - ItemFlags\n4 - Potion Effects\n5 - View other settings\n";
     cout << "Note that at any time you can enter 0 to not set a certain setting\n";
-    cout << "Questions starting with * need to be answered.";
+    cout << "Questions starting with * need to be answered.\n";
     cin >> selection;
     if (selection == 1) {
+      cout << "What component(s) do you want to use? Enter 1 to set each one." << endl;
+      cout << "1 - hide_tooltip\n2 - enchantment_glint_override\n3 - durability\n4 - max_stack_size\n5 - tool\n6 - food\n7 - consumable\n8 - damage_resistant\n";
+      cout << "9 - enchantable\n10 - glider\n11 - item_model\n12 - tooltip_style\n13 - use_cooldown\n14 - reparable\n15 - equippable\n";
+      cin >> selection;
+      switch (selection) {
+        case 1:
+          cout << "Hide tooltip? (true/false)" << endl;
+          bool boolInput;
+          cin >> boolInput;
+          I->setHideTooltip(boolInput);
+        case 2:
+          cout << "Do you want enchantement glint? (true/false)" << endl;
+          cin >> boolInput;
+          I->setEnchantmentGlintOverride(boolInput);
+        case 3:
+          cout << "What do you want the durability to be? (integer)" << endl;
+          int intInput;
+          cin >> intInput;
+          I->setDurability(intInput);
+        case 4:
+          cout << "What do you want the Maximum stack size to be? (integer)" << endl;
+          cin >> intInput;
+          I->setMaxStackSize(intInput);
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+        case 10:
+        case 11:
+        case 12:
+        case 13:
+        case 14:
+        case 15:
 
+        default:;
+      }
     }
-    cout << "What do you want the durability to be?" << endl;
-    int dur;
-    cin >> dur;
-    I->setDurability(dur);
     I->save();
   } else if (Block* B = dynamic_cast<Block*>(item)) {
     cout << "What type of block do you want?\n1 - NOTEBLOCK\n2 - CHORUSBLOCK\n3 - STRINGBLOCK" << endl;
