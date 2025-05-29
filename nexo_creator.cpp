@@ -79,10 +79,14 @@ public:
     item[itemname]["Mechanics"]["custom_block"]["model"] = mod;
   }
   void setHardness(int hardness) {
-    item[itemname]["Mechanics"]["custom_block"]["hardness"] = hardness;
+    if (hardness!=0) {
+      item[itemname]["Mechanics"]["custom_block"]["hardness"] = hardness;
+    }
   }
   void setBeaconBase(bool beaconBase) {
-    item[itemname]["Mechanics"]["custom_block"]["beacon_base_block"] = beaconBase;
+    if (beaconBase!=0) {
+      item[itemname]["Mechanics"]["custom_block"]["beacon_base_block"] = beaconBase;
+    }
   }
 };
 
@@ -118,43 +122,51 @@ int main() {
   } else if (selection == 2) {
     item = new Block();
   } else {
-    cout << "Invalid selection. Please pick again." << endl;
+    cout << "Invalid selection." << endl;
+    return 1;
   }
   item->texture_namespace = data["texture_namespace"];
   item->model_namespace = data["model_namespace"];
   std::filesystem::create_directories("output");
   std::ofstream file(string("output/") + filename);
   item->filename = filename;
-  cout << "Good, Now what do you want the item id to be?" << endl;
+  cout << "*Good, Now what do you want the item id to be?" << endl;
   string input;
   string itemid;
   cin >> itemid;
-  cout << "What do you want the displayname to be?" << endl;
+  cout << "*What do you want the displayname to be?" << endl;
   cin.ignore();
   getline(cin, input);
   //cin >> input;
   item->setDisplayname(input, itemid);
-  cout << "What do you want the material to be?" << endl;
+  cout << "*What do you want the material to be?" << endl;
   cin >> input;
   item->setMaterial(input);
-  cout << "What do you want the texture to be? Enter 0 to use a model instead or 1 to set a parent model before setting the texture" << endl;
+  cout << "*What do you want the texture to be? Enter 1 to use a model instead or 2 to set a parent model before setting the texture" << endl;
   cin >> input;
   item->save();
-  if (input == "0") {
-    cout << "What do you want the model to be?" << endl;
+  if (input == "1") {
+    cout << "*What do you want the model to be?" << endl;
     cin >> input;
     item->setModel(input);
-  } else if (input == "1") {
-    cout << "What do you want the parent model to be?" << endl;
+  } else if (input == "2") {
+    cout << "*What do you want the parent model to be?" << endl;
     cin >> input;
     item->setParentModel(input);
-    cout << "What do you want the texture to be?" << endl;
+    cout << "*What do you want the texture to be?" << endl;
     cin >> input;
     item->setTexture(input);
   } else {
     item->setTexture(input);
   }
   if (Item* I = dynamic_cast<Item*>(item)) {
+    cout << "Choose what to add next\n" << "1 - Components\n2 - Lore\n3 - ItemFlags\n4 - Potion Effects\n5 - View other settings\n";
+    cout << "Note that at any time you can enter 0 to not set a certain setting\n";
+    cout << "Questions starting with * need to be answered.";
+    cin >> selection;
+    if (selection == 1) {
+
+    }
     cout << "What do you want the durability to be?" << endl;
     int dur;
     cin >> dur;
