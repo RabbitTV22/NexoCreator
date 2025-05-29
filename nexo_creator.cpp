@@ -130,7 +130,9 @@ int main() {
   string itemid;
   cin >> itemid;
   cout << "What do you want the displayname to be?" << endl;
-  cin >> input;
+  cin.ignore();
+  getline(cin, input);
+  //cin >> input;
   item->setDisplayname(input, itemid);
   cout << "What do you want the material to be?" << endl;
   cin >> input;
