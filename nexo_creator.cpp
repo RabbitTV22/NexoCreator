@@ -110,15 +110,41 @@ public:
     if (maxStack!=0) {
       item[itemname]["Components"]["max_stack_size"] = maxStack;
     }
-    void setTool(int tool, int speed); {
-
-    }
-    void setFood(double nutrition, double saturation, bool can_aways_eat); {
-
-    }
-
   }
-};
+    void setTool(double damage_per_block, double default_mining_speed, double speed, bool correct_for_drops, const std::vector<string>& materials, std::vector<string>& tags) {
+
+    item[itemname]["Components"]["tool"]["rules"] = nlohmann::json::array();
+    if (damage_per_block != 0) {
+        item[itemname]["Components"]["tool"]["damage_per_block"] = damage_per_block;
+      }
+      if (default_mining_speed != 0) {
+        item[itemname]["Components"]["tool"]["default_mining_speed"] = default_mining_speed;
+      }
+      if (speed != 0) {
+        item[itemname]["Components"]["tool"]["rules"].push_back(
+          {"speed", speed}
+        );
+      }
+    if (materials.size() != 0) {
+        item[itemname]["Components"]["tool"]["rules"].push_back(
+          {"materials", materials}
+        );
+    }
+    if (tags.size() != 0) {
+      item[itemname]["Components"]["tool"]["rules"].push_back({"tags", tags});
+    }
+      item[itemname]["Components"]["tool"]["rules"].push_back({"correct_for_drops", correct_for_drops});
+    }
+
+
+    void setFood(double nutrition, double saturation, bool can_aways_eat) {
+      item[itemname]["Components"]["food"]["nutrition"] = nutrition;
+      item[itemname]["Components"]["food"]["saturation"] = saturation;
+      item[itemname]["Components"]["food"]["can_always_eat"] = can_aways_eat;
+    }
+
+
+  };
 
 
 int main() {
@@ -165,7 +191,6 @@ int main() {
   item->setMaterial(input);
   cout << "*What do you want the texture to be? Enter 1 to use a model instead or 2 to set a parent model before setting the texture" << endl;
   cin >> input;
-  item->save();
   if (input == "1") {
     cout << "*What do you want the model to be?" << endl;
     cin >> input;
@@ -180,6 +205,7 @@ int main() {
   } else {
     item->setTexture(input);
   }
+  item->save();
   if (Item* I = dynamic_cast<Item*>(item)) {
     cout << "Choose what to add next\n" << "1 - Components\n2 - Lore\n3 - ItemFlags\n4 - Potion Effects\n5 - View other settings\n";
     cout << "Note that at any time you can enter 0 to not set a certain setting\n";
@@ -196,37 +222,50 @@ int main() {
           bool boolInput;
           cin >> boolInput;
           I->setHideTooltip(boolInput);
+          break;
         case 2:
           cout << "Do you want enchantement glint? (true/false)" << endl;
           cin >> boolInput;
           I->setEnchantmentGlintOverride(boolInput);
+          break;
         case 3:
           cout << "What do you want the durability to be? (integer)" << endl;
           int intInput;
           cin >> intInput;
           I->setDurability(intInput);
+          break;
         case 4:
           cout << "What do you want the Maximum stack size to be? (integer)" << endl;
           cin >> intInput;
           I->setMaxStackSize(intInput);
+          break;
         case 5:
-          cout << "What do you want to be the speed of this tool?" << endl;
-          int speed;
+          cout << "What do you want the damage per block to be? (double)" << endl;
+          double damage;
+          cin >> damage;
+          cout << "What do you want to be the default minging speed? (double)" << endl;
+          double dSpeed;
+          cin >> dSpeed;
+          std::vector<std::string> materials, tags;
+          cout << "What do you want to be the speed of this tool? (double)" << endl;
+          double speed;
           cin >> speed;
-          cout << "Do you want the tool to be correct for drops?" << endl;
+          cout << "Do you want the tool to be correct for drops? (true/false)" << endl;
           cin >> boolInput;
           if (boolInput == true) {
             cout << "What materials do you want to be allowed to mine? Enter 0 to finish the list." << endl;
             cin >> input;
-            while (input != "0") {
-              cin >> input; // NEED ARRAY ------------------------------------
+            while (cin >> input && input != "0") {
+              materials.push_back(input);
             }
             cout << "What do you want the block tags to be? Enter 0 to finish the list." << endl;
             cin >> input;
-            while (input != "0") {
-              cin >> input; // ARRAY HERE AS WELL ---------------------------------------
+            while (cin >> input && input != "0") {
+              tags.push_back(input);
             }
           }
+          I->setTool(damage, dSpeed, speed, boolInput, materials, tags);
+          break;
         case 6:
           cout << "How much nutrition do you want this item to give? " << endl;
           double nutrition;
@@ -237,6 +276,7 @@ int main() {
           cout << "Do you want this item to always be edible?" << endl;
           cin >> boolInput;
           I->setFood(nutrition, saturation, boolInput);
+          break;
         case 7:
         case 8:
         case 9:
