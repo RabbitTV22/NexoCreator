@@ -110,9 +110,16 @@ public:
     if (maxStack!=0) {
       item[itemname]["Components"]["max_stack_size"] = maxStack;
     }
+    void setTool(int tool, int speed); {
+
+    }
+    void setFood(double nutrition, double saturation, bool can_aways_eat); {
+
+    }
 
   }
 };
+
 
 int main() {
   std::ifstream settings("settings.json");
@@ -203,7 +210,33 @@ int main() {
           cin >> intInput;
           I->setMaxStackSize(intInput);
         case 5:
+          cout << "What do you want to be the speed of this tool?" << endl;
+          int speed;
+          cin >> speed;
+          cout << "Do you want the tool to be correct for drops?" << endl;
+          cin >> boolInput;
+          if (boolInput == true) {
+            cout << "What materials do you want to be allowed to mine? Enter 0 to finish the list." << endl;
+            cin >> input;
+            while (input != "0") {
+              cin >> input; // NEED ARRAY ------------------------------------
+            }
+            cout << "What do you want the block tags to be? Enter 0 to finish the list." << endl;
+            cin >> input;
+            while (input != "0") {
+              cin >> input; // ARRAY HERE AS WELL ---------------------------------------
+            }
+          }
         case 6:
+          cout << "How much nutrition do you want this item to give? " << endl;
+          double nutrition;
+          cin >> nutrition;
+          cout << "How much saturation do you want this item to give?" << endl;
+          double saturation;
+          cin >> saturation;
+          cout << "Do you want this item to always be edible?" << endl;
+          cin >> boolInput;
+          I->setFood(nutrition, saturation, boolInput);
         case 7:
         case 8:
         case 9:
