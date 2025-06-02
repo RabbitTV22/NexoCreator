@@ -111,8 +111,12 @@ public:
       item[itemname]["Components"]["max_stack_size"] = maxStack;
     }
   }
-    void setTool(double damage_per_block, double default_mining_speed, double speed, bool correct_for_drops, const std::vector<string>& materials, std::vector<string>& tags) {
 
+
+    void setTool(double damage_per_block, double default_mining_speed, double speed, bool correct_for_drops, const std::vector<string>& materials, std::vector<string>& tags) {
+      auto& tool = item[itemname]["Components"]["tool"];
+      tool["rules"] = nlohmann::json::array();
+      nlohmann::json rule = nlohmann::json::object();
     item[itemname]["Components"]["tool"]["rules"] = nlohmann::json::array();
     if (damage_per_block != 0) {
         item[itemname]["Components"]["tool"]["damage_per_block"] = damage_per_block;
@@ -121,19 +125,20 @@ public:
         item[itemname]["Components"]["tool"]["default_mining_speed"] = default_mining_speed;
       }
       if (speed != 0) {
-        item[itemname]["Components"]["tool"]["rules"].push_back(
-          {"speed", speed}
-        );
+        rule["speed"] = speed;
       }
-    if (materials.size() != 0) {
-        item[itemname]["Components"]["tool"]["rules"].push_back(
-          {"materials", materials}
-        );
+    if (materials.size() == 1) {
+        rule["material"] = materials;
+    } else if (materials.size() != 1) {
+      rule["materials"] = materials;
     }
-    if (tags.size() != 0) {
-      item[itemname]["Components"]["tool"]["rules"].push_back({"tags", tags});
+    if (tags.size() == 1) {
+      rule["tag"]= tags;
+    } else if (tags.size() != 1){
+      rule["tags"] = tags;
     }
-      item[itemname]["Components"]["tool"]["rules"].push_back({"correct_for_drops", correct_for_drops});
+      rule["correct_for_drops"] = correct_for_drops;
+      tool["rules"].push_back(std::move(rule));
     }
 
 
