@@ -262,8 +262,8 @@ int main() {
           double speed;
           cin >> speed;
           cout << "Do you want the tool to be correct for drops? (true/false)" << endl;
-          cin >> boolInput;
-          if (boolInput == true) {
+          bool dropsCorrect;
+          cin >> dropsCorrect;
             cout << "What materials do you want to be allowed to mine? Enter 0 to finish the list." << endl;
             while (true) {
               cin >> input;
@@ -276,8 +276,7 @@ int main() {
               if (input == "0") break;
               tags.push_back(input);
             }
-          }
-          I->setTool(damage, dSpeed, speed, boolInput, materials, tags);
+          I->setTool(damage, dSpeed, speed, dropsCorrect, materials, tags);
           break;
         }
         case 6: {
