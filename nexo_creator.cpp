@@ -140,8 +140,12 @@ public:
 
 
     void setFood(double nutrition, double saturation, string can_aways_eat) {
+    if (!nutrition == 0) {
       item[itemname]["Components"]["food"]["nutrition"] = nutrition;
+    }
+    if (!saturation == 0) {
       item[itemname]["Components"]["food"]["saturation"] = saturation;
+    }
       item[itemname]["Components"]["food"]["can_always_eat"] = can_aways_eat;
     }
 
