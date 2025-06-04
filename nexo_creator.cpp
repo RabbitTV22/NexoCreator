@@ -84,18 +84,18 @@ public:
 
 class Item: public MainSelection {
 private:
-  bool hideTT = false;
+  string hideTT = false;
   int durability = 400;
-  bool EnchGlintOvvride = false;
+  string EnchGlintOvvride = false;
   int maxStack = 64;
 public:
-  void setHideTooltip(bool hideTooltip) {
+  void setHideTooltip(string hideTooltip) {
     hideTT = hideTooltip;
     item[itemname]["Components"]["hide_tooltip"] = hideTooltip;
   }
-  void setEnchantmentGlintOverride(bool enchantment_glint_override) {
+  void setEnchantmentGlintOverride(string enchantment_glint_override) {
     EnchGlintOvvride = enchantment_glint_override;
-    if (enchantment_glint_override!=0) {
+    if (enchantment_glint_override!="0") {
       item[itemname]["Components"]["enchantment_glint_override"] = enchantment_glint_override;
     }
   }
@@ -113,7 +113,7 @@ public:
   }
 
 
-    void setTool(double damage_per_block, double default_mining_speed, double speed, bool correct_for_drops, const std::vector<string>& materials, std::vector<string>& tags) {
+    void setTool(double damage_per_block, double default_mining_speed, double speed, string correct_for_drops, const std::vector<string>& materials, std::vector<string>& tags) {
       auto& tool = item[itemname]["Components"]["tool"];
       tool["rules"] = nlohmann::json::array();
       nlohmann::json rule = nlohmann::json::object();
@@ -143,7 +143,7 @@ public:
     }
 
 
-    void setFood(double nutrition, double saturation, bool can_aways_eat) {
+    void setFood(double nutrition, double saturation, string can_aways_eat) {
       item[itemname]["Components"]["food"]["nutrition"] = nutrition;
       item[itemname]["Components"]["food"]["saturation"] = saturation;
       item[itemname]["Components"]["food"]["can_always_eat"] = can_aways_eat;
@@ -222,20 +222,20 @@ int main() {
       cout << "1 - hide_tooltip\n2 - enchantment_glint_override\n3 - durability\n4 - max_stack_size\n5 - tool\n6 - food\n7 - consumable\n8 - damage_resistant\n";
       cout << "9 - enchantable\n10 - glider\n11 - item_model\n12 - tooltip_style\n13 - use_cooldown\n14 - reparable\n15 - equippable\n";
       cin >> selection;
-      bool boolInput;
       int intInput;
       switch (selection) {
         case 1: {
           cout << "Hide tooltip? (true/false)" << endl;
-          bool boolInput;
-          cin >> boolInput;
-          I->setHideTooltip(boolInput);
+          string hideTooltip;
+          cin >> hideTooltip;
+          I->setHideTooltip(hideTooltip);
           break;
         }
         case 2: {
           cout << "Do you want enchantement glint? (true/false)" << endl;
-          cin >> boolInput;
-          I->setEnchantmentGlintOverride(boolInput);
+          string enchantglint;
+          cin >> enchantglint;
+          I->setEnchantmentGlintOverride(enchantglint);
           break;
         }
         case 3: {
@@ -251,30 +251,29 @@ int main() {
           break;
         }
         case 5: {
+          double damage, dSpeed, speed;
+          std::vector<std::string> materials, tags;
+          string dropsCorrect;
+          string material, tag;
           cout << "What do you want the damage per block to be? (double)" << endl;
-          double damage;
           cin >> damage;
           cout << "What do you want to be the default minging speed? (double)" << endl;
-          double dSpeed;
           cin >> dSpeed;
-          std::vector<std::string> materials, tags;
           cout << "What do you want to be the speed of this tool? (double)" << endl;
-          double speed;
           cin >> speed;
           cout << "Do you want the tool to be correct for drops? (true/false)" << endl;
-          bool dropsCorrect;
           cin >> dropsCorrect;
-            cout << "What materials do you want to be allowed to mine? Enter 0 to finish the list." << endl;
+            cout << "What materials do you want to be allowed to mine? Enter done to finish the list." << endl;
             while (true) {
-              cin >> input;
-              if (input == "0") break;
-              materials.push_back(input);
+              cin >> material;
+              if (material == "done") break;
+              materials.push_back(material);
             }
-            cout << "What do you want the block tags to be? Enter 0 to finish the list." << endl;
+            cout << "What do you want the block tags to be? Enter done to finish the list." << endl;
             while (true) {
-              cin >> input;
-              if (input == "0") break;
-              tags.push_back(input);
+              cin >> tag;
+              if (tag == "done") break;
+              tags.push_back(tag);
             }
           I->setTool(damage, dSpeed, speed, dropsCorrect, materials, tags);
           break;
@@ -287,8 +286,9 @@ int main() {
           double saturation;
           cin >> saturation;
           cout << "Do you want this item to always be edible?" << endl;
-          cin >> boolInput;
-          I->setFood(nutrition, saturation, boolInput);
+          string edible;
+          cin >> edible;
+          I->setFood(nutrition, saturation, edible);
           break;
         } //next cases TODO
         case 7:
