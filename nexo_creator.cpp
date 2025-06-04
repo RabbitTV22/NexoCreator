@@ -84,9 +84,9 @@ public:
 
 class Item: public MainSelection {
 private:
-  string hideTT = false;
+  string hideTT = "false";
   int durability = 400;
-  string EnchGlintOvvride = false;
+  string EnchGlintOvvride = "false";
   int maxStack = 64;
 public:
   void setHideTooltip(string hideTooltip) {
