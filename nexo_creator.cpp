@@ -116,7 +116,7 @@ public:
     void setTool(double damage_per_block, double default_mining_speed, double speed, string correct_for_drops, const std::vector<string>& materials, std::vector<string>& tags) {
       auto& tool = item[itemname]["Components"]["tool"];
       tool["rules"] = nlohmann::json::array();
-      nlohmann::json rule = nlohmann::json::object();
+      ordered_json rule = nlohmann::json::object();
     item[itemname]["Components"]["tool"]["rules"] = nlohmann::json::array();
     if (damage_per_block != 0) {
         item[itemname]["Components"]["tool"]["damage_per_block"] = damage_per_block;
