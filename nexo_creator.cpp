@@ -128,14 +128,10 @@ public:
         rule["speed"] = speed;
       }
     if (!materials.empty()) {
-        rule["material"] = materials;
-    } else if (materials.size() != 1) {
-      rule["materials"] = materials;
+        rule["materials"] = materials;
     }
     if (!tags.empty()) {
-      rule["tag"]= tags;
-    } else if (tags.size() != 1){
-      rule["tags"] = tags;
+      rule["tags"]= tags;
     }
       rule["correct_for_drops"] = correct_for_drops;
       tool["rules"].emplace_back(rule);
