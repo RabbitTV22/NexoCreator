@@ -138,7 +138,8 @@ public:
       rule["tags"] = tags;
     }
       rule["correct_for_drops"] = correct_for_drops;
-      tool["rules"].push_back(std::move(rule));
+      tool["rules"].emplace_back(rule);
+
     }
 
 
@@ -221,30 +222,35 @@ int main() {
       cout << "1 - hide_tooltip\n2 - enchantment_glint_override\n3 - durability\n4 - max_stack_size\n5 - tool\n6 - food\n7 - consumable\n8 - damage_resistant\n";
       cout << "9 - enchantable\n10 - glider\n11 - item_model\n12 - tooltip_style\n13 - use_cooldown\n14 - reparable\n15 - equippable\n";
       cin >> selection;
+      bool boolInput;
+      int intInput;
       switch (selection) {
-        case 1:
+        case 1: {
           cout << "Hide tooltip? (true/false)" << endl;
           bool boolInput;
           cin >> boolInput;
           I->setHideTooltip(boolInput);
           break;
-        case 2:
+        }
+        case 2: {
           cout << "Do you want enchantement glint? (true/false)" << endl;
           cin >> boolInput;
           I->setEnchantmentGlintOverride(boolInput);
           break;
-        case 3:
+        }
+        case 3: {
           cout << "What do you want the durability to be? (integer)" << endl;
-          int intInput;
           cin >> intInput;
           I->setDurability(intInput);
           break;
-        case 4:
+        }
+        case 4: {
           cout << "What do you want the Maximum stack size to be? (integer)" << endl;
           cin >> intInput;
           I->setMaxStackSize(intInput);
           break;
-        case 5:
+        }
+        case 5: {
           cout << "What do you want the damage per block to be? (double)" << endl;
           double damage;
           cin >> damage;
@@ -259,19 +265,22 @@ int main() {
           cin >> boolInput;
           if (boolInput == true) {
             cout << "What materials do you want to be allowed to mine? Enter 0 to finish the list." << endl;
-            cin >> input;
-            while (cin >> input && input != "0") {
+            while (true) {
+              cin >> input;
+              if (input == "0") break;
               materials.push_back(input);
             }
             cout << "What do you want the block tags to be? Enter 0 to finish the list." << endl;
-            cin >> input;
-            while (cin >> input && input != "0") {
+            while (true) {
+              cin >> input;
+              if (input == "0") break;
               tags.push_back(input);
             }
           }
           I->setTool(damage, dSpeed, speed, boolInput, materials, tags);
           break;
-        case 6:
+        }
+        case 6: {
           cout << "How much nutrition do you want this item to give? " << endl;
           double nutrition;
           cin >> nutrition;
@@ -282,6 +291,7 @@ int main() {
           cin >> boolInput;
           I->setFood(nutrition, saturation, boolInput);
           break;
+        } //next cases TODO
         case 7:
         case 8:
         case 9:
