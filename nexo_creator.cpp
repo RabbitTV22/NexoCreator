@@ -127,12 +127,12 @@ public:
       if (speed != 0) {
         rule["speed"] = speed;
       }
-    if (materials.size() == 1) {
+    if (!materials.empty()) {
         rule["material"] = materials;
     } else if (materials.size() != 1) {
       rule["materials"] = materials;
     }
-    if (tags.size() == 1) {
+    if (!tags.empty()) {
       rule["tag"]= tags;
     } else if (tags.size() != 1){
       rule["tags"] = tags;
@@ -266,7 +266,8 @@ int main() {
             cout << "What materials do you want to be allowed to mine? Enter done to finish the list." << endl;
             while (true) {
               cin >> material;
-              if (material == "done") break;
+              std::transform(material.begin() , material.end() , material.begin() , ::toupper);
+              if (material == "DONE") break;
               materials.push_back(material);
             }
             cout << "What do you want the block tags to be? Enter done to finish the list." << endl;
@@ -285,7 +286,7 @@ int main() {
           cout << "How much saturation do you want this item to give?" << endl;
           double saturation;
           cin >> saturation;
-          cout << "Do you want this item to always be edible?" << endl;
+          cout << "Do you want this item to always be edible? (true/false)" << endl;
           string edible;
           cin >> edible;
           I->setFood(nutrition, saturation, edible);
@@ -314,6 +315,4 @@ int main() {
     B->save();
   }
   delete item;
-
-  return 0;
 }
