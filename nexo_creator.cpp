@@ -148,9 +148,15 @@ public:
     }
       item[itemname]["Components"]["food"]["can_always_eat"] = can_aways_eat;
     }
-
+void setLore(std::vector<string>& lore) {
+    auto& l = item[itemname]["lore"];
+    l = nlohmann::json::array();
+    item[itemname]["lore"] = l;
+    l.push_back(lore);
+  }
 
   };
+
 
 
 int main() {
@@ -252,7 +258,7 @@ int main() {
         }
         case 5: {
           double damage, dSpeed, speed;
-          std::vector<std::string> materials, tags;
+          std::vector<string> materials, tags;
           string dropsCorrect;
           string material, tag;
           cout << "What do you want the damage per block to be? (double)" << endl;
@@ -304,6 +310,18 @@ int main() {
 
         default:;
       }
+    } else if (selection == 2) {
+      cout << "Enter lore. Enter \"done\" to finish." << endl;
+      std::vector<string> lore_lines;
+      string lore;
+      std::cin.ignore();
+      while (true) {
+        std::getline(std::cin, lore);
+        if (lore == "done") break;
+        lore_lines.push_back(lore);
+      }
+      I->setLore(lore_lines);
+
     }
     I->save();
   } else if (Block* B = dynamic_cast<Block*>(item)) {
