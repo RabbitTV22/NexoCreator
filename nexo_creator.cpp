@@ -150,9 +150,7 @@ public:
     }
 void setLore(std::vector<string>& lore) {
     auto& l = item[itemname]["lore"];
-    l = nlohmann::json::array();
-    item[itemname]["lore"] = l;
-    l.push_back(lore);
+    item[itemname]["lore"] = lore;
   }
 
   };
@@ -219,111 +217,121 @@ int main() {
   }
   item->save();
   if (Item* I = dynamic_cast<Item*>(item)) {
-    cout << "Choose what to add next\n" << "1 - Components\n2 - Lore\n3 - ItemFlags\n4 - Potion Effects\n5 - View other settings\n";
-    cout << "Note that at any time you can enter 0 to not set a certain setting\n";
-    cout << "Questions starting with * need to be answered.\n";
-    cin >> selection;
-    if (selection == 1) {
-      cout << "What component(s) do you want to use? Enter 1 to set each one." << endl;
-      cout << "1 - hide_tooltip\n2 - enchantment_glint_override\n3 - durability\n4 - max_stack_size\n5 - tool\n6 - food\n7 - consumable\n8 - damage_resistant\n";
-      cout << "9 - enchantable\n10 - glider\n11 - item_model\n12 - tooltip_style\n13 - use_cooldown\n14 - reparable\n15 - equippable\n";
+    bool done_adding = false;
+    while (!done_adding) {
+      cout << "Choose what to add next\n" << "1 - Components\n2 - Lore\n3 - ItemFlags\n4 - Potion Effects\n5 - View other settings\n";
+      cout << "Note that at any time you can enter 0 to not set a certain setting\n";
+      cout << "Questions starting with * need to be answered.\n";
       cin >> selection;
-      int intInput;
-      switch (selection) {
-        case 1: {
-          cout << "Hide tooltip? (true/false)" << endl;
-          string hideTooltip;
-          cin >> hideTooltip;
-          I->setHideTooltip(hideTooltip);
-          break;
-        }
-        case 2: {
-          cout << "Do you want enchantement glint? (true/false)" << endl;
-          string enchantglint;
-          cin >> enchantglint;
-          I->setEnchantmentGlintOverride(enchantglint);
-          break;
-        }
-        case 3: {
-          cout << "What do you want the durability to be? (integer)" << endl;
-          cin >> intInput;
-          I->setDurability(intInput);
-          break;
-        }
-        case 4: {
-          cout << "What do you want the Maximum stack size to be? (integer)" << endl;
-          cin >> intInput;
-          I->setMaxStackSize(intInput);
-          break;
-        }
-        case 5: {
-          double damage, dSpeed, speed;
-          std::vector<string> materials, tags;
-          string dropsCorrect;
-          string material, tag;
-          cout << "What do you want the damage per block to be? (double)" << endl;
-          cin >> damage;
-          cout << "What do you want to be the default minging speed? (double)" << endl;
-          cin >> dSpeed;
-          cout << "What do you want to be the speed of this tool? (double)" << endl;
-          cin >> speed;
-          cout << "Do you want the tool to be correct for drops? (true/false)" << endl;
-          cin >> dropsCorrect;
-            cout << "What materials do you want to be allowed to mine? Enter done to finish the list." << endl;
-            while (true) {
-              cin >> material;
-              std::transform(material.begin() , material.end() , material.begin() , ::toupper);
-              if (material == "DONE") break;
-              materials.push_back(material);
-            }
-            cout << "What do you want the block tags to be? Enter done to finish the list." << endl;
-            while (true) {
-              cin >> tag;
-              if (tag == "done") break;
-              tags.push_back(tag);
-            }
-          I->setTool(damage, dSpeed, speed, dropsCorrect, materials, tags);
-          break;
-        }
-        case 6: {
-          cout << "How much nutrition do you want this item to give? " << endl;
-          double nutrition;
-          cin >> nutrition;
-          cout << "How much saturation do you want this item to give?" << endl;
-          double saturation;
-          cin >> saturation;
-          cout << "Do you want this item to always be edible? (true/false)" << endl;
-          string edible;
-          cin >> edible;
-          I->setFood(nutrition, saturation, edible);
-          break;
-        } //next cases TODO
-        case 7:
-        case 8:
-        case 9:
-        case 10:
-        case 11:
-        case 12:
-        case 13:
-        case 14:
-        case 15:
-
-        default:;
+      if (selection == 0) {
+        done_adding = true;
       }
-    } else if (selection == 2) {
-      cout << "Enter lore. Enter \"done\" to finish." << endl;
-      std::vector<string> lore_lines;
-      string lore;
-      std::cin.ignore();
-      while (true) {
-        std::getline(std::cin, lore);
-        if (lore == "done") break;
-        lore_lines.push_back(lore);
-      }
-      I->setLore(lore_lines);
+      if (selection == 1) {
+        bool done_adding_components = false;
+        while (!done_adding_components) {
+          cout << "What component(s) do you want to use? Enter 1 to set each one." << endl;
+          cout << "1 - hide_tooltip\n2 - enchantment_glint_override\n3 - durability\n4 - max_stack_size\n5 - tool\n6 - food\n7 - consumable\n8 - damage_resistant\n";
+          cout << "9 - enchantable\n10 - glider\n11 - item_model\n12 - tooltip_style\n13 - use_cooldown\n14 - reparable\n15 - equippable\n";
+          cin >> selection;
+          int intInput;
+          switch (selection) {
+            case 1: {
+              cout << "Hide tooltip? (true/false)" << endl;
+              string hideTooltip;
+              cin >> hideTooltip;
+              I->setHideTooltip(hideTooltip);
+              break;
+            }
+            case 2: {
+              cout << "Do you want enchantement glint? (true/false)" << endl;
+              string enchantglint;
+              cin >> enchantglint;
+              I->setEnchantmentGlintOverride(enchantglint);
+              break;
+            }
+            case 3: {
+              cout << "What do you want the durability to be? (integer)" << endl;
+              cin >> intInput;
+              I->setDurability(intInput);
+              break;
+            }
+            case 4: {
+              cout << "What do you want the Maximum stack size to be? (integer)" << endl;
+              cin >> intInput;
+              I->setMaxStackSize(intInput);
+              break;
+            }
+            case 5: {
+              double damage, dSpeed, speed;
+              std::vector<string> materials, tags;
+              string dropsCorrect;
+              string material, tag;
+              cout << "What do you want the damage per block to be? (double)" << endl;
+              cin >> damage;
+              cout << "What do you want to be the default minging speed? (double)" << endl;
+              cin >> dSpeed;
+              cout << "What do you want to be the speed of this tool? (double)" << endl;
+              cin >> speed;
+              cout << "Do you want the tool to be correct for drops? (true/false)" << endl;
+              cin >> dropsCorrect;
+              cout << "What materials do you want to be allowed to mine? Enter done to finish the list." << endl;
+              while (true) {
+                cin >> material;
+                std::transform(material.begin() , material.end() , material.begin() , ::toupper);
+                if (material == "DONE") break;
+                materials.push_back(material);
+              }
+              cout << "What do you want the block tags to be? Enter done to finish the list." << endl;
+              while (true) {
+                cin >> tag;
+                if (tag == "done") break;
+                tags.push_back(tag);
+              }
+              I->setTool(damage, dSpeed, speed, dropsCorrect, materials, tags);
+              break;
+            }
+            case 6: {
+              cout << "How much nutrition do you want this item to give? " << endl;
+              double nutrition;
+              cin >> nutrition;
+              cout << "How much saturation do you want this item to give?" << endl;
+              double saturation;
+              cin >> saturation;
+              cout << "Do you want this item to always be edible? (true/false)" << endl;
+              string edible;
+              cin >> edible;
+              I->setFood(nutrition, saturation, edible);
+              break;
+            } //next cases TODO
+            case 7:
+            case 8:
+            case 9:
+            case 10:
+            case 11:
+            case 12:
+            case 13:
+            case 14:
+            case 15:
 
+            default:
+              done_adding_components = true;
+          }
+        }
+      } else if (selection == 2) {
+        cout << "Enter lore. Enter \"done\" to finish." << endl;
+        std::vector<string> lore_lines;
+        string lore;
+        std::cin.ignore();
+        while (true) {
+          std::getline(std::cin, lore);
+          if (lore == "done") break;
+          lore_lines.push_back(lore);
+        }
+        I->setLore(lore_lines);
+
+      }
+      I->save();
     }
-    I->save();
   } else if (Block* B = dynamic_cast<Block*>(item)) {
     cout << "What type of block do you want?\n1 - NOTEBLOCK\n2 - CHORUSBLOCK\n3 - STRINGBLOCK" << endl;
     int intInput;
