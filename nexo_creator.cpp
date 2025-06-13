@@ -152,6 +152,10 @@ void setLore(std::vector<string>& lore) {
     auto& l = item[itemname]["lore"];
     item[itemname]["lore"] = lore;
   }
+  void setItemFlags(std::vector<string>& item_flags) {
+    auto& i = item[itemname]["item_flags"];
+    item[itemname]["item_flags"] = item_flags;
+  }
 
   };
 
@@ -329,6 +333,18 @@ int main() {
         }
         I->setLore(lore_lines);
 
+      } else if (selection == 3) {
+        cout << "What item flags do you want?" << endl;
+        std::vector<string> item_flags;
+        string item_flag;
+        std::cin.ignore();
+        while (true) {
+          std::getline(std::cin, item_flag);
+          std::transform(item_flag.begin(), item_flag.end(), item_flag.begin(), ::toupper);
+          if (item_flag == "DONE") break;
+          item_flags.push_back(item_flag);
+        }
+        I->setItemFlags(item_flags);
       }
       I->save();
     }
