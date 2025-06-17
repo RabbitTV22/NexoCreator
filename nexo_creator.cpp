@@ -156,10 +156,28 @@ void setLore(std::vector<string>& lore) {
     auto& i = item[itemname]["item_flags"];
     item[itemname]["item_flags"] = item_flags;
   }
+  void setPotionEffects(string effect, int duration, int amp, bool ambient, bool part, bool icon) {
+    auto& p = item[itemname]["PotionEffects"];
+    if (!p.is_array()) {
+      p = nlohmann::json::array();
+    }
+    ordered_json data = {
+      {"type", effect},
+      {"duration", duration},
+      {"amplifier", amp},
+      {"ambient", ambient},
+      {"particles", part},
+      {"icon", icon}
+
+    };
+    p.push_back(data);
+  }
 
   };
 
-
+bool boolInput(const string& input) {
+  return input=="true" || input=="1";
+}
 
 int main() {
   std::ifstream settings("settings.json");
@@ -272,7 +290,7 @@ int main() {
               string material, tag;
               cout << "What do you want the damage per block to be? (double)" << endl;
               cin >> damage;
-              cout << "What do you want to be the default minging speed? (double)" << endl;
+              cout << "What do you want to be the default mining speed? (double)" << endl;
               cin >> dSpeed;
               cout << "What do you want to be the speed of this tool? (double)" << endl;
               cin >> speed;
@@ -346,26 +364,37 @@ int main() {
         }
         I->setItemFlags(item_flags);
       } else if (selection == 4) {
-        cout << "What potion effect do you want to add? Enter \"done\" to finish." << endl;
         string effect;
         int duration;
         int amplifier;
         bool ambient;
         bool particles;
         bool icon;
-        while (effect != "done") {
+        string input;
+        while (true) {
+          cout << "What potion effect do you want to add? Enter \"done\" to finish." << endl;
           cin >> effect;
+          std::transform(effect.begin() , effect.end() , effect.begin() , ::toupper);
+          if (effect == "DONE") {break;}
+
           cout << "What do you want the duration to be?" << endl;
           cin >> duration;
+
           cout << "What do you want the amplifier to be?" << endl;
           cin >> amplifier;
-          cout << "Do you want to make the effect ambient?" << endl;
-          cin >> ambient;
-          cout << "Do you want to have particles?" << endl;
-          cin >> particles;
-          cout << "Do you want the icon?" << endl;
-          cin >> icon;
+
+          cout << "Do you want to make the effect ambient? (1 for true, 0 for false)" << endl;
+          cin >> input;
+          ambient = boolInput(input);
+          cout << "Do you want to have particles? (1 for true, 0 for false)" << endl;
+          cin >> input;
+          particles = boolInput(input);
+          cout << "Do you want the icon? (1 for true, 0 for false)" << endl;
+          cin >> input;
+          icon = boolInput(input);
+          I->setPotionEffects(effect, duration, amplifier, ambient, particles, icon);
         }
+
       }
       I->save();
     }
