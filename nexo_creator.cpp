@@ -223,7 +223,7 @@ int main() {
   if (Item* I = dynamic_cast<Item*>(item)) {
     bool done_adding = false;
     while (!done_adding) {
-      cout << "Choose what to add next\n" << "1 - Components\n2 - Lore\n3 - ItemFlags\n4 - Potion Effects\n5 - View other settings\n";
+      cout << "Choose what to add next\n" << "1 - Components\n2 - Lore\n3 - ItemFlags\n4 - Potion Effects\n5 - Attribute Modifiers\n6 - View other settings\n";
       cout << "Note that at any time you can enter 0 to not set a certain setting\n";
       cout << "Questions starting with * need to be answered.\n";
       cin >> selection;
@@ -345,6 +345,27 @@ int main() {
           item_flags.push_back(item_flag);
         }
         I->setItemFlags(item_flags);
+      } else if (selection == 4) {
+        cout << "What potion effect do you want to add? Enter \"done\" to finish." << endl;
+        string effect;
+        int duration;
+        int amplifier;
+        bool ambient;
+        bool particles;
+        bool icon;
+        while (effect != "done") {
+          cin >> effect;
+          cout << "What do you want the duration to be?" << endl;
+          cin >> duration;
+          cout << "What do you want the amplifier to be?" << endl;
+          cin >> amplifier;
+          cout << "Do you want to make the effect ambient?" << endl;
+          cin >> ambient;
+          cout << "Do you want to have particles?" << endl;
+          cin >> particles;
+          cout << "Do you want the icon?" << endl;
+          cin >> icon;
+        }
       }
       I->save();
     }
